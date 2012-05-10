@@ -1,6 +1,6 @@
 {
   "name": "dscrape",
-  "version": "0.1",
+  "version": "0.1.0",
   "description": "Declarative scraping with CATS",
   "keywords": [
     "web scraping",
