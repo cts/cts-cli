@@ -1,0 +1,45 @@
+{
+  "name": "dscrape",
+  "version": "0.1",
+  "description": "Declarative scraping with CATS",
+  "keywords": [
+    "web scraping",
+    "cats",
+    "declarative",
+    "scrape"
+  ],
+  "maintainers": [{
+    "name": "Ted Benson",
+    "email": "eob@csail.mit.edu",
+    "url": "http://www.edwardbenson.com/"
+  }],
+  "contributors": [
+  ],
+  "bugs": {
+    "email": "eob@csail.mit.edu",
+    "url": "https://github.com/webcats/dscrape/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/webcats/dscrape/blob/master/LICENSE.txt"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "http://github.com/webcats/dscrape.git"
+    }
+  ],
+  "dependencies": {
+    "jsdom": "0.2.x",
+    "request": "2.9.x"
+  },
+  "engines": {
+    "node": ">=0.1.9"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "main": "./lib"
+}

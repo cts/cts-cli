@@ -24,6 +24,7 @@ fs             = require 'fs'
 path           = require 'path'
 jsdom          = require 'jsdom'
 request        = require 'request'
+prettyjson     = require 'prettyjson'
 
 jquery = fs.readFileSync("./lib/jquery.js").toString()
 catsjs = fs.readFileSync("./lib/cats.js").toString()
@@ -37,14 +38,18 @@ BANNER = '''
 '''
 
 cats = []
+catData = []
 url = ""
 
 exports.run = ->
   if parseOptions()
+    for cfile in cats
+      contents = fs.readFileSync(cfile).toString()
+      catData.push(contents)
     pullDataFromUrl(url, cats, scraped)
 
 scraped = (data) ->
-  printLine "DID RETURN " + JSON.stringify(data)
+  printLine prettyjson.render(data)
 
 parseOptions = ->
   opts = process.argv[2..]
@@ -69,7 +74,15 @@ pullDataFromString = (str, catsSheets, scraped) ->
     html:str,
     src:[jquery,catsjs]
     done: (err, window) ->
+      # Vrm. Start 'er up
       engine = new window.CATS.Engine()
+      # Load up the cats files
+      for sheet in catData
+        window.CATS.Cascade.attachSheet(sheet)
+      console.log("Blocks__________________________")
+      printLine prettyjson.render(window.CATS.Cascade.blocks)
+      console.log("")
+      console.log("")
       data = engine.recoverData(window.$('html'))
       scraped(data)
   })
