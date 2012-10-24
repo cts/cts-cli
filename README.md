@@ -24,12 +24,15 @@ And the following tools to develop with DScrape:
   * Coffeescript
     Installation instructions at http://coffeescript.org/
 
-  * Coffee Toaster, a build management tool for Coffeescript
-    On a Mac: `sudo npm install -g coffee-toaster`
+Building the Project
+--------------------
 
-Building the project
+From the project root, type:
 
-  * From the project root: `toaster --watch`
+    coffee --compile --output lib/ src/
+
+This will create lib/dscrape.js for you, using src/dscrape.coffee as source.
+The bin/dscrape executable relies on this library.
 
 Included Examples
 -----------------
