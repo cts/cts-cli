@@ -79,11 +79,16 @@ pullDataFromString = (str, catsSheets, scraped) ->
       # Load up the cats files
       for sheet in catData
         window.CATS.Cascade.attachSheet(sheet)
-      console.log("Blocks__________________________")
+      console.log("Blocks")
+      console.log("------")
+      console.log("")
       printLine prettyjson.render(window.CATS.Cascade.blocks)
       console.log("")
       console.log("")
-      data = engine.recoverData(window.$('html'))
+      console.log("Data")
+      console.log("----")
+      console.log("")
+      data = engine.recoverData(window.jQueryHcss('html'))
       scraped(data)
   })
 

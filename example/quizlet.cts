@@ -2,10 +2,10 @@
   repeat-inner: flashcards;
 }
 
-span.qWord {
+#set-term-list table tbody span.qWord {
   value: question;
 }
 
-span.qDef {
+#set-term-list table tbody span.qDef {
   value: answer;
 }
