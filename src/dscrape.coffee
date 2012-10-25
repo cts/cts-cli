@@ -25,59 +25,60 @@ path           = require 'path'
 jsdom          = require 'jsdom'
 request        = require 'request'
 prettyjson     = require 'prettyjson'
+optimist       = require 'optimist'
 
 jquery = fs.readFileSync("./lib/jquery.js").toString()
-catsjs = fs.readFileSync("./lib/cts.js").toString()
+ctsjs = fs.readFileSync("./lib/cts.js").toString()
 
 printLine = (line) -> process.stdout.write line + '\n'
 printWarn = (line) -> process.stderr.write line + '\n'
 
 # The help banner that is printed when `coffee` is called without arguments.
 BANNER = '''
-  Usage: dscrape cats-file url 
+  Usage: dscrape cts-file url 
 '''
 
-cats = []
-catData = []
-url = ""
-
+# ----------------
+# MAIN FUNCTION
+# ----------------
 exports.run = ->
-  if parseOptions()
-    for cfile in cats
-      contents = fs.readFileSync(cfile).toString()
-      catData.push(contents)
-    pullDataFromUrl(url, cats, scraped)
+  argv = optimist.usage("Usage: $0 <CTS FILE> <URL> [--format fmt]")
+                 .argv
+  if argv._.length < 2
+    printWarn "Must provide CTS File and URL as first two arguments."
+    optimist.showHelp()
+    return false
+  ctsFilename = argv._[0]
+  url = argv._[1]
+
+  console.log("CTS File: " + ctsFilename)
+  console.log("URL: " + url)
+
+  ctsContent = fs.readFileSync(ctsFilename).toString()
+  ctsSheets = [ ctsContent ]
+
+  pullDataFromUrl(url, ctsSheets, scraped)
 
 scraped = (data) ->
   printLine prettyjson.render(data)
 
-parseOptions = ->
-  opts = process.argv[2..]
-  if opts.length < 2
-    printWarn "Not enough arguments"
-    usage()
-    return false
-  cats.push(opts[0])
-  url = opts[1]
-  return true
-
-pullDataFromUrl = (theUrl, catsSheets, scraped) ->
-  request {uri:theUrl}, (error, response, body) -> 
+pullDataFromUrl = (url, ctsSheets, scraped) ->
+  request {uri:url}, (error, response, body) -> 
     if error and response.statusCode != 200
       printWarn "Error contacting " + url
       return {}
-    return pullDataFromString(body, catsSheets, scraped)
+    return pullDataFromString(body, ctsSheets, scraped)
 
-pullDataFromString = (str, catsSheets, scraped) ->
+pullDataFromString = (str, ctsSheets, scraped) ->
   data = {}
   jsdom.env({
     html:str,
-    src:[jquery,catsjs]
+    src:[jquery, ctsjs]
     done: (err, window) ->
       # Vrm. Start 'er up
       engine = new window.CTS.Engine()
-      # Load up the cats files
-      for sheet in catData
+      # Load up the cts files
+      for sheet in ctsSheets
         blocks = window.CTS.Parser.parseBlocks(sheet)
         engine.rules._incorporateBlocks(blocks)
         #window.CTS.Cascade.attachSheet(sheet)
