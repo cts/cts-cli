@@ -25,6 +25,9 @@ You'll need the following tools to run DScrape:
   * The Pretty JSON node module, which enables pretty-print of JSON data
     On a Mac: `sudo npm install -g prettyjson`
 
+  * Optimist, for options parsing
+    On a Mac: `sudo npm install -g optimist`
+
 And the following tools to develop with DScrape:
 
   * Coffeescript

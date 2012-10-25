@@ -27,7 +27,7 @@ request        = require 'request'
 prettyjson     = require 'prettyjson'
 
 jquery = fs.readFileSync("./lib/jquery.js").toString()
-catsjs = fs.readFileSync("./lib/cats.js").toString()
+catsjs = fs.readFileSync("./lib/cts.js").toString()
 
 printLine = (line) -> process.stdout.write line + '\n'
 printWarn = (line) -> process.stderr.write line + '\n'
@@ -75,14 +75,16 @@ pullDataFromString = (str, catsSheets, scraped) ->
     src:[jquery,catsjs]
     done: (err, window) ->
       # Vrm. Start 'er up
-      engine = new window.CATS.Engine()
+      engine = new window.CTS.Engine()
       # Load up the cats files
       for sheet in catData
-        window.CATS.Cascade.attachSheet(sheet)
+        blocks = window.CTS.Parser.parseBlocks(sheet)
+        engine.rules._incorporateBlocks(blocks)
+        #window.CTS.Cascade.attachSheet(sheet)
       console.log("Blocks")
       console.log("------")
       console.log("")
-      printLine prettyjson.render(window.CATS.Cascade.blocks)
+      printLine prettyjson.render(engine.rules.blocks)
       console.log("")
       console.log("")
       console.log("Data")
