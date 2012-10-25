@@ -16,6 +16,12 @@ You'll need the following tools to run DScrape:
   * The JSDOM node module, which simulates the DOM API within a node JS process.
     On a Mac: `sudo npm install -g jsdom`
 
+  * The Contextify node module
+      NOTE: This is essential for JSDOM to work correctly. JSDOM will suffer run-time errors
+      without this plugin.
+      NOTE 2: This will require you to have XCode installed on a Mac.
+    One a Mac: `sudo npm install -g contextify`
+
   * The Pretty JSON node module, which enables pretty-print of JSON data
     On a Mac: `sudo npm install -g prettyjson`
 
