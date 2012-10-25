@@ -58,7 +58,8 @@ Included Examples
 Run these examples from the project root.
 
   * Reddit
-    ./bin/dscrape examples/reddit.cts http://www.reddit.com
+
+    `./bin/dscrape examples/reddit.cts http://www.reddit.com`
 
 Todo
 ----
