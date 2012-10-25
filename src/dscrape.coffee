@@ -42,8 +42,7 @@ BANNER = '''
 # MAIN FUNCTION
 # ----------------
 exports.run = ->
-  argv = optimist.usage("Usage: $0 <CTS FILE> <URL> [--format fmt]")
-                 .argv
+  argv = optimist.usage("Usage: $0 <CTS FILE> <URL> [--format fmt] [--verbose]").argv
   if argv._.length < 2
     printWarn "Must provide CTS File and URL as first two arguments."
     optimist.showHelp()
@@ -51,8 +50,9 @@ exports.run = ->
   ctsFilename = argv._[0]
   url = argv._[1]
 
-  console.log("CTS File: " + ctsFilename)
-  console.log("URL: " + url)
+  if argv.verbose?
+    console.log("CTS File: " + ctsFilename)
+    console.log("URL: " + url)
 
   ctsContent = fs.readFileSync(ctsFilename).toString()
   ctsSheets = [ ctsContent ]
@@ -61,7 +61,7 @@ exports.run = ->
     formatted = formatOutput(data, argv.format)
     printLine(formatted)
 
-  pullDataFromUrl(url, ctsSheets, handleOutput)
+  pullDataFromUrl(url, ctsSheets, argv.verbose?, handleOutput)
 
 formatOutput = (data, format) ->
   if format?
@@ -72,14 +72,14 @@ formatOutput = (data, format) ->
   else
     return prettyjson.render(data)
 
-pullDataFromUrl = (url, ctsSheets, scraped) ->
+pullDataFromUrl = (url, ctsSheets, verbose, scraped) ->
   request {uri:url}, (error, response, body) -> 
     if error and response.statusCode != 200
       printWarn "Error contacting " + url
       return {}
-    return pullDataFromString(body, ctsSheets, scraped)
+    return pullDataFromString(body, ctsSheets, verbose, scraped)
 
-pullDataFromString = (str, ctsSheets, scraped) ->
+pullDataFromString = (str, ctsSheets, verbose, scraped) ->
   data = {}
   jsdom.env({
     html:str,
@@ -92,15 +92,16 @@ pullDataFromString = (str, ctsSheets, scraped) ->
         blocks = window.CTS.Parser.parseBlocks(sheet)
         engine.rules._incorporateBlocks(blocks)
         #window.CTS.Cascade.attachSheet(sheet)
-      console.log("Blocks")
-      console.log("------")
-      console.log("")
-      printLine prettyjson.render(engine.rules.blocks)
-      console.log("")
-      console.log("")
-      console.log("Data")
-      console.log("----")
-      console.log("")
+      if verbose
+        console.log("Blocks")
+        console.log("------")
+        console.log("")
+        printLine prettyjson.render(engine.rules.blocks)
+        console.log("")
+        console.log("")
+        console.log("Data")
+        console.log("----")
+        console.log("")
       data = engine.recoverData(window.jQueryHcss('html'))
       scraped(data)
   })
