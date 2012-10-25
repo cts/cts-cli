@@ -57,10 +57,20 @@ exports.run = ->
   ctsContent = fs.readFileSync(ctsFilename).toString()
   ctsSheets = [ ctsContent ]
 
-  pullDataFromUrl(url, ctsSheets, scraped)
+  handleOutput = (data) =>
+    formatted = formatOutput(data, argv.format)
+    printLine(formatted)
 
-scraped = (data) ->
-  printLine prettyjson.render(data)
+  pullDataFromUrl(url, ctsSheets, handleOutput)
+
+formatOutput = (data, format) ->
+  if format?
+    if format == "pretty"
+      return prettyjson.render(data)
+    else if format == "json"
+      return JSON.stringify(data)
+  else
+    return prettyjson.render(data)
 
 pullDataFromUrl = (url, ctsSheets, scraped) ->
   request {uri:url}, (error, response, body) -> 
