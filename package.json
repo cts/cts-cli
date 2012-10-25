@@ -1,10 +1,11 @@
 {
   "name": "dscrape",
-  "version": "0.1.0",
-  "description": "Declarative scraping with CATS",
+  "version": "1.0.0",
+  "description": "Declarative Web Scraping Utility",
   "keywords": [
     "web scraping",
-    "cats",
+    "cts",
+    "cascading tree sheets",
     "declarative",
     "scrape"
   ],
@@ -32,14 +33,23 @@
     }
   ],
   "dependencies": {
-    "jsdom": "0.2.x",
-    "request": "2.9.x"
+    "jsdom": "*",
+    "request": "*",
+    "contextify": "*",
+    "prettyjson": "*",
+    "optimist": "*",
+  },
+  "devDependencies": {
+    "coffee-script": "*"
   },
   "engines": {
     "node": ">=0.1.9"
   },
   "directories": {
     "lib": "./lib"
+  },
+  "bin": {
+    "dscrape": "./bin/dscrape"
   },
   "main": "./lib"
 }
