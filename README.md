@@ -1,8 +1,17 @@
 DScrape: Declarative Web Scraping
 =================================
 
-Usage:
-   dscrape <CTS File> <URL>
+    Usage:
+        dscrape <CTS File> <URL>
+
+    Optional Arguments:
+        --format fmt    Specify an output format for data. Valid formats are:
+                          json
+                          pretty (default)
+
+        --verbose       Include helpful status and debugging messages in output.
+                        If this flag is turned off, you can simply pipe the
+                        command output into a file for saving.
 
 
 Development Setup
