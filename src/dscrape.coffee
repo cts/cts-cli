@@ -26,9 +26,9 @@ jsdom          = require 'jsdom'
 request        = require 'request'
 prettyjson     = require 'prettyjson'
 optimist       = require 'optimist'
-
-jquery = fs.readFileSync("./lib/jquery.js").toString()
-ctsjs = fs.readFileSync("./lib/cts.js").toString()
+lib = path.dirname(fs.realpathSync(__filename));
+jquery = fs.readFileSync(lib + "/jquery.js").toString()
+ctsjs = fs.readFileSync(lib + "/cts.js").toString()
 
 printLine = (line) -> process.stdout.write line + '\n'
 printWarn = (line) -> process.stderr.write line + '\n'
