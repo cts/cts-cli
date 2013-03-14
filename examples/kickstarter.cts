@@ -1,4 +1,4 @@
-#h2.title a {
+#title a {
   value: title;
 }
 
