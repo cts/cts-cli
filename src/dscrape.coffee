@@ -26,6 +26,7 @@ jsdom          = require 'jsdom'
 request        = require 'request'
 prettyjson     = require 'prettyjson'
 optimist       = require 'optimist'
+
 lib = path.dirname(fs.realpathSync(__filename));
 jquery = fs.readFileSync(lib + "/jquery.js").toString()
 ctsjs = fs.readFileSync(lib + "/cts.js").toString()

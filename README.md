@@ -13,34 +13,26 @@ DScrape: Declarative Web Scraping
                         If this flag is turned off, you can simply pipe the
                         command output into a file for saving.
 
+    The CTS File can either be a file on your filesystem or a "Github URL" of the
+    form github://USER/REPO/path/to/file.cts. DScrape will fetch the CTS file remotely
+    from Github and then apply it.
 
-Development Setup
------------------
+    Examples:
 
-You'll need the following tools to run DScrape:
+       dscrape github://cts/dscrape/examples/reddit.cts http://www.reddit.com
 
-  * Node.js
+Installing 
+----------
 
-    Installation instructions at http://nodejs.org/
+First install **Node.js** (http://nodejs.org/), and then install DScrape with the Node package manager:
 
-  * **JSDOM** (node module), which simulates the DOM API within a node JS process.
+    npm install -g dscrape
 
-    On a Mac: `sudo npm install -g jsdom`
+Developing
+-----------
 
-  * **Contextify** (node module)
+Install the project dependencies by running `npm install` in the project root. THen 
 
-      NOTE: This is essential for JSDOM to work correctly. JSDOM will suffer run-time errors
-      without this plugin.
-      NOTE 2: This will require you to have XCode installed on a Mac.
-    One a Mac: `sudo npm install -g contextify`
-
-  * **Pretty JSON** (node module), which enables pretty-print of JSON data
-  
-    On a Mac: `sudo npm install -g prettyjson`
-
-  * **Optimist** (node module), for options parsing
-
-    On a Mac: `sudo npm install -g optimist`
 
 And the following tools to develop with DScrape:
 
