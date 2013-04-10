@@ -113,7 +113,7 @@ var fetchTreesheetDirectory = function(cbSuccess, cbError) {
 };
 
 var fetchTreesheetExample = function(filename, cbSuccess, cbError) {
-  fetchFile(EXAMPLES + filaneme, cbSuccess, cbError);
+  fetchFile(EXAMPLES + filename , cbSuccess, cbError);
 };
 
 
@@ -155,12 +155,13 @@ var fetchFile = function(fileRef, cbSuccess, cbError) {
 
 var lookupTreesheet = function(forUrl, cbSuccess, cbError) {
   fetchTreesheetDirectory(function(directory) {
-    if (typeof directory.treesheets != 'undefined') {
-      for (var i = 0; i < directory.treesheets.length; i++) {
-        var regex = new RegExp(directory.treesheets[i].regex, "i");
+    var d = JSON.parse(directory);
+    if (typeof d.treesheets != 'undefined') {
+      for (var i = 0; i < d.treesheets.length; i++) {
+        var regex = new RegExp(d.treesheets[i].regex, "i");
         if (forUrl.match(regex) !== null) {
           // Download the sheet
-          fetchTreesheetExample(directory.treesheets[i].filename, cbSuccess, cbError);
+          fetchTreesheetExample(d.treesheets[i].filename, cbSuccess, cbError);
           return;
         }
       }
