@@ -1,0 +1,11 @@
+{
+  "last_updated": "2003-04-09",
+  "treesheets": [
+    {
+      "name": "Reddit Index",
+      "domain": "reddit.com",
+      "filename": "reddit.cts",
+      "regex": "((www.reddit.com)|(www.reddit.com/r/([^/]+)))/?$"
+    }
+  ]
+}

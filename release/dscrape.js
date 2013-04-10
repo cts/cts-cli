@@ -48,10 +48,17 @@ BANNER = "" +
 "                                             \n" +
 "  by Ted Benson <eob@csail.mit.edu> | @edwardbenson \n" +
 "                                             \n" +
-"  Usage: dscrape <CTS File> <URL>            \n" +
+"  Usage: \n" +
+"\n" +
+"    dscrape <URL> [CTS File]            \n" +
 "                                             \n" +
-"    - <CTS File> can be either a file on your filesystem or a Github link \n" +
-"      of the form github://user/repo/path/to/file.cts                     \n" +
+"    Both the URL and the CTS File can either be: \n" +
+"      * A path to a file on your local filesystem \n" +
+"      * A URL \n" +
+"      * A \"Github URL\" of the form github://user/repo/path/to/file.cts\n" +
+"\n" +
+"    If the [CTS File] argument is missing, DScrape will attempt to locate\n" +
+"    an appropriate scraper for your URL pattern, if one has been registered.\n" +
 "                                              \n" +
 "  Optional Arguments:                         \n" +
 "                                              \n" +
@@ -67,6 +74,10 @@ BANNER = "" +
 ERROR404 = "  You stepped in the stream\n" +
            "  but the water has moved on\n" +
            "  that file is missing.\n";
+
+DIRECTORY = "https://raw.github.com/cts/dscrape/master/examples/directory.json";
+
+EXAMPLES = "https://raw.github.com/cts/dscrape/master/examples/";
 
 var showError = function(message) {
   console.log("\nError:\n");
@@ -94,8 +105,17 @@ var githubUrlToRealUrl = function(url) {
   var user = parts.shift();
   var repo = parts.shirt();
   var file = parts.join("/");
-  return "https://github.com/" + user + "/" + repo + "/blob/master/" + file;
+  return "https://raw.github.com/" + user + "/" + repo + "/master/" + file;
 };
+
+var fetchTreesheetDirectory = function(cbSuccess, cbError) {
+  fetchFile(DIRECTORY, cbSuccess, cbError);
+};
+
+var fetchTreesheetExample = function(filename, cbSuccess, cbError) {
+  fetchFile(EXAMPLES + filaneme, cbSuccess, cbError);
+};
+
 
 /* Omnibus file loading.
  */
@@ -132,6 +152,23 @@ var fetchFile = function(fileRef, cbSuccess, cbError) {
     }
   }
 };
+
+var lookupTreesheet = function(forUrl, cbSuccess, cbError) {
+  fetchTreesheetDirectory(function(directory) {
+    if (typeof directory.treesheets != 'undefined') {
+      for (var i = 0; i < directory.treesheets.length; i++) {
+        var regex = new RegExp(directory.treesheets[i].regex, "i");
+        if (forUrl.match(regex) !== null) {
+          // Download the sheet
+          fetchTreesheetExample(directory.treesheets[i].filename, cbSuccess, cbError);
+          return;
+        }
+      }
+    }
+    cbError("Couldn't find a treesheet to match this URL");
+  }, cbError);
+};
+
 
 var doExtraction = function(ctsFile, html, opts, cbSuccess) {
   data = {};
@@ -172,13 +209,24 @@ var printData = function(data, opts) {
 
 exports.run = function() {
   var argv = optimist.usage(BANNER).argv;
-  if (argv._.length < 2) {
+  if (argv._.length < 1) {
     optimist.showHelp();
     return false;
   }
   
-  var ctsRef = argv._[0];
-  var htmlRef = argv._[1];
+  var htmlRef = argv._[0];
+  var ctsRef = null;
+  var ctsLoader = null;
+
+  if (argv._.length < 2) {
+    // Need to look up CTS sheet
+    ctsRef = htmlRef;
+    ctsLoader = lookupTreesheet;
+  } else {
+    ctsRef = argv._[1];
+    ctsLoader = fetchFile;
+  }
+
   var format = "pretty";
   
   if (typeof argv.format != 'undefined') {
@@ -194,7 +242,7 @@ exports.run = function() {
   if (opts.verbose) {
     console.log("* Fetching CTS file");
   }
-  fetchFile(ctsRef, function(ctsFile) {
+  ctsLoader(ctsRef, function(ctsFile) {
     if (opts.verbose) {
       console.log("* Fetching HTML file");
     }
