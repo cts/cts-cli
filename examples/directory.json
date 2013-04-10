@@ -5,7 +5,7 @@
       "name": "Reddit Index",
       "domain": "reddit.com",
       "filename": "reddit.cts",
-      "regex": "((www.reddit.com)|(www.reddit.com/r/([^/]+)))/?$"
+      "regex": "http://((www.reddit.com)|(www.reddit.com/r/([^/]+)))/?$"
     }
   ]
 }
