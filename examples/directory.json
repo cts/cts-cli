@@ -6,6 +6,24 @@
       "domain": "reddit.com",
       "filename": "reddit.cts",
       "regex": "http://((www.reddit.com)|(www.reddit.com/r/([^/]+)))/?$"
+      "contributed_by": {
+        "name": "Ted Benson",
+        "email": "eob@csail.mit.edu",
+        "github": "eob",
+        "homepage": "http://www.edwardbenson.com"
+      }
+    },
+    {
+      "name": "Twitter Profile",
+      "domain": "twitter.com",
+      "filename": "twitter-profile.cts",
+      "regex": "http://www.twitter.com/[a-zA-Z0-9]+$",
+      "contributed_by": {
+        "name": "Ted Benson",
+        "email": "eob@csail.mit.edu",
+        "github": "eob",
+        "homepage": "http://www.edwardbenson.com"
+      }
     }
   ]
 }
