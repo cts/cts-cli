@@ -18,8 +18,17 @@ DScrape: Declarative Web Scraping
     from Github and then apply it.
 
     Examples:
+      Tries to load a scraper from the DScrape Scraper Repository:
 
-       dscrape github://cts/dscrape/examples/reddit.cts http://www.reddit.com
+       dscrape http://www.reddit.com
+
+      Uses a scraper at a pre-defined Github location:
+      
+       dscrape http://www.reddit.com github://cts/dscrape/examples/reddit.cts
+
+      Uses a scraper in a local file:
+
+       dscrape http://www.reddit.com reddit.cts
 
 Installing 
 ----------
