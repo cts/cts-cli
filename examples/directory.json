@@ -29,7 +29,7 @@
       "name": "Kickstarter Page",
       "domain": "kickstarter.com",
       "filename": "kickstarter.cts",
-      "regex": "http://www.kickstarter.com/projects/[a-zA-Z0-9-_]+/[a-zA-Z0-9-_]+(\?.*)?",
+      "regex": "http://www.kickstarter.com/projects/[a-zA-Z0-9-_]+/[a-zA-Z0-9-_]+(\\?.*)?",
       "contributed_by": {
         "name": "Ted Benson",
         "email": "eob@csail.mit.edu",
