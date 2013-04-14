@@ -180,6 +180,7 @@ var doExtraction = function(ctsFile, html, opts, cbSuccess) {
     html: html,
     src: [jquery, ctsjs],
     done: function(err, window) {
+      window.console = console;
       var engine = new window.CTS.Engine();
       if (opts.verbose) {
         console.log("* Parsing CTS");
