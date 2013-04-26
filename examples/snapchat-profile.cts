@@ -16,4 +16,5 @@ html {
 
 #score {
   value: score;
+  value-prefix:HISCORE:&nbsp::;
 }
