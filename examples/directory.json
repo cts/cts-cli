@@ -41,7 +41,7 @@
       "name": "Snapchat Profile",
       "domain": "snapchat.com",
       "filename": "snapchat-profile.cts",
-      "regex": "http://www.snapchat.com/[a-zA-Z0-9-_.]+$",
+      "regex": "http://www.snapchat.com/[a-zA-Z0-9-_\\.]+$",
       "contributed_by": {
         "name": "Ted Benson",
         "email": "eob@csail.mit.edu",
