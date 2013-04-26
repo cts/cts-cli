@@ -1,6 +1,6 @@
 {
   "name": "dscrape",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Declarative Web Scraping Utility",
   "keywords": [
     "web scraping",
