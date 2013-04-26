@@ -57,7 +57,7 @@
     "lib": "./lib"
   },
   "bin": {
-    "dscrape": "./release/dscrape"
+    "dscrape": "./bin/dscrape"
   },
   "main": "./lib"
 }
