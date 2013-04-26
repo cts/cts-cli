@@ -13,7 +13,5 @@ var optimist     = require('optimist');
 
 lib = path.join(path.dirname(fs.realpathSync(__filename)), "..", "lib");
 
-jquery = fs.readFileSync(
-  path.join(lib, "jquery.js")).toString()
 ctsjs = fs.readFileSync(
   path.join(lib, "cts.js")).toString()

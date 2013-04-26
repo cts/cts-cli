@@ -6,6 +6,7 @@ fs = require('fs');
 path = require('path');
 optimist = require('optimist');
 url = require('url');
+lib  = path.join(path.dirname(fs.realpathSync(__filename)), '../lib');
 
 BANNER = "" +
 "     ____  _____                             \n" +
@@ -147,7 +148,7 @@ var doExtraction = function(ctsFile, html, opts, cbSuccess) {
   }
   jsdom.env({
     html: html,
-    src: [jquery, ctsjs],
+    src: [ctsjs],
     done: function(err, window) {
       window.console = console;
       var engine = new window.CTS.Engine();
