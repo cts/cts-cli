@@ -6,12 +6,11 @@ var jsdom        = require('jsdom');
 var request      = require('request');
 var prettyjson   = require('prettyjson');
 var optimist     = require('optimist');
+var url          = require('url');
 
-// Duct tape includes
+var lib = path.join(path.dirname(fs.realpathSync(__filename)), "..", "lib");
 
-// TODO(eob): Turn these into proper npm includes
+// Duct Tape Includes
+// TODO(eob): Turn this into a proper include
 
-lib = path.join(path.dirname(fs.realpathSync(__filename)), "..", "lib");
-
-ctsjs = fs.readFileSync(
-  path.join(lib, "cts.js")).toString()
+var ctsjs = fs.readFileSync(path.join(lib, "cts.js")).toString();

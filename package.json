@@ -1,7 +1,7 @@
 {
-  "name": "dscrape",
+  "name": "CTS-cli",
   "version": "1.0.2",
-  "description": "Declarative Web Scraping Utility",
+  "description": "Cascading Tree Sheets command line interface",
   "keywords": [
     "web scraping",
     "cts",
@@ -18,18 +18,18 @@
   ],
   "bugs": {
     "email": "eob@csail.mit.edu",
-    "url": "https://github.com/webcats/dscrape/issues"
+    "url": "https://github.com/cts/cts-cli/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/webcats/dscrape/blob/master/LICENSE.txt"
+      "url": "http://github.com/cts/cts-cli/blob/master/LICENSE.txt"
     }
   ],
   "repositories": [
     {
       "type": "git",
-      "url": "http://github.com/webcats/dscrape.git"
+      "url": "http://github.com/cts/cts-cli.git"
     }
   ],
   "dependencies": {
@@ -57,7 +57,7 @@
     "lib": "./lib"
   },
   "bin": {
-    "dscrape": "./bin/dscrape"
+    "cts": "./bin/cts"
   },
   "main": "./lib"
 }

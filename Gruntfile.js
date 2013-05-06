@@ -24,10 +24,12 @@ module.exports = function(grunt) {
       dscrape: {
         src : [
           "src/fragments/prefix._js",
-          "src/dscrape.js",
+          "src/utilities.js",
+          "src/commands/scrape.js",
+          "src/cts-cli.js",
           "src/fragments/postfix._js",
         ],
-        dest : "release/dscrape.js"
+        dest : "release/cts-cli.js"
       }
     },
     jshint: {

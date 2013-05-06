@@ -1,5 +1,21 @@
-DScrape: Declarative Web Scraping
-=================================
+Cascading Tree Sheets Command Line Interface
+============================================
+
+The Cascading Tree Sheets command line interface (cts-cli) provides command
+line utilities for manipulating data with CTS. This current includes:
+
+*  Scraping data out of web pages
+
+Installing 
+----------
+
+First install **Node.js** (http://nodejs.org/), and then install DScrape with the Node package manager:
+
+    npm install -g cts-cli
+
+Usage
+-----
+
 
     Usage:
         dscrape <CTS File> <URL>
@@ -29,13 +45,6 @@ DScrape: Declarative Web Scraping
       Uses a scraper in a local file:
 
        dscrape http://www.reddit.com reddit.cts
-
-Installing 
-----------
-
-First install **Node.js** (http://nodejs.org/), and then install DScrape with the Node package manager:
-
-    npm install -g dscrape
 
 Developing
 -----------
