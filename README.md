@@ -9,7 +9,7 @@ line utilities for manipulating data with CTS. This current includes:
 Installing 
 ----------
 
-First install **Node.js** (http://nodejs.org/), and then install DScrape with the Node package manager:
+First install **Node.js** (http://nodejs.org/), and then install CTS-cli with the Node package manager:
 
     npm install -g cts-cli
 

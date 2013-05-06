@@ -1,5 +1,5 @@
 {
-  "name": "CTS-cli",
+  "name": "cts-cli",
   "version": "1.0.2",
   "description": "Cascading Tree Sheets command line interface",
   "keywords": [
