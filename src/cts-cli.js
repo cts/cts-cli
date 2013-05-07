@@ -29,7 +29,7 @@ CTSCLI.Commands = {
   "scrape": new CTSCLI.Scrape(),
   "stitch": new CTSCLI.Stitch(),
   "fetch": new CTSCLI.Fetch(),
-  "mockup": new CTSCLI.Mockup()
+  "install": new CTSCLI.Install()
 };
 
 /**

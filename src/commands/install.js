@@ -2,17 +2,17 @@ if (typeof CTSCLI == "undefined") {
   CTSCLI = {};
 } 
 
-CTSCLI.Mockup = function() {
+CTSCLI.Install = function() {
 };
 
-CTSCLI.Mockup.prototype.help = function() {
+CTSCLI.Install.prototype.help = function() {
   console.log(CTSCLI.Utilities.BANNER + 
-    "  MOCKUP\n" +
-    "  ======\n\n" +
-    "  Helps manage HTML mockup.\n\n" +
+    "  INSTALL\n" +
+    "  =======\n\n" 
+    "  Installs an HTML mockup.\n\n" +
     "  Usage: \n\n" +
     "\n" +
-    "    cts mockup install <URL>   \n\n" +
+    "    cts install <URL>   \n\n" +
     "    The URL can be: \n" +
     "      * A <Type>/<Name> index into the official CTS mockup repository\n" +
     "      * A path to a mockup package file on your local filesystem \n" +
@@ -21,7 +21,7 @@ CTSCLI.Mockup.prototype.help = function() {
     "        that points to a mockup package file.\n\n"); 
 };
 
-CTSCLI.Mockup.prototype.run = function(argv) {
+CTSCLI.Install.prototype.run = function(argv) {
   if (argv._.length < 3) {
     this.help();
     return;
@@ -50,13 +50,13 @@ CTSCLI.Mockup.prototype.run = function(argv) {
  *
  * TODO(eob): Implement.
  */
-CTSCLI.Mockup.prototype.installPackage = function(spec) {
+CTSCLI.Install.prototype.installPackage = function(spec) {
   if (typeof spec.files != 'undefined') {
     this.installFiles([], spec.files);
   }
 };
 
-CTSCLI.Mockup.prototype.installFiles = function(relativePath, dirSpec) {
+CTSCLI.Install.prototype.installFiles = function(relativePath, dirSpec) {
   var self = this;
   _.each(dirSpec, function(value, key) {
     var pathClone = relativePath.slice(0);
@@ -73,7 +73,7 @@ CTSCLI.Mockup.prototype.installFiles = function(relativePath, dirSpec) {
   });
 };
 
-CTSCLI.Mockup.prototype.installFile = function(intoPath, fileSpec, kind) {
+CTSCLI.Install.prototype.installFile = function(intoPath, fileSpec, kind) {
   var self = this;
   CTSCLI.Utilities.fetchFile(fileSpec,
       function(contents) {
@@ -86,7 +86,7 @@ CTSCLI.Mockup.prototype.installFile = function(intoPath, fileSpec, kind) {
   );
 };
 
-CTSCLI.Mockup.prototype.saveContents = function(intoPath, contents, kind) {
+CTSCLI.Install.prototype.saveContents = function(intoPath, contents, kind) {
   var fullPath = path.join(intoPath);
   if (kind == 'binary') {
     // the contents is a buffer object
