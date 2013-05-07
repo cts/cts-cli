@@ -7,6 +7,7 @@ var request      = require('request');
 var prettyjson   = require('prettyjson');
 var optimist     = require('optimist');
 var url          = require('url');
+var _            = require("underscore");
 
 var lib = path.join(path.dirname(fs.realpathSync(__filename)), "..", "lib");
 

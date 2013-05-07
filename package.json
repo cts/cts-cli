@@ -39,7 +39,8 @@
     "url": "*",
     "contextify": "*",
     "prettyjson": "*",
-    "optimist": "*"
+    "optimist": "*",
+    "underscore": "*"
   },
   "devDependencies": {
     "grunt": "*",
