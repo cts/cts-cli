@@ -21,7 +21,7 @@ CTSCLI.Install.prototype.help = function() {
 };
 
 CTSCLI.Install.prototype.run = function(argv) {
-  if (argv._.length < 3) {
+  if (argv._.length < 2) {
     this.help();
     return;
   }
