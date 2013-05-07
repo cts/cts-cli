@@ -93,7 +93,6 @@ CTSCLI.Mockup.prototype.saveContents = function(intoPath, contents, kind) {
     var data = contents.toString('binary');
     fs.writeFileSync(fullPath, data, 'binary');
   } else {
-    data = contents;
-    fs.writeFileSync(fullPath, data, kind);
+    fs.writeFileSync(fullPath, contents, kind);
   }
 };

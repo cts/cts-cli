@@ -14,6 +14,7 @@ MAINHELP = CTSCLI.Utilities.BANNER +
 "    \n" +
 "     scrape     Scrapes content from a web page\n" +
 "     stitch     Stitches together web documents\n" +
+"     mockup     Utilities for managing mockups\n" +
 "     fetch      Fetches a web document\n" +
 "     help       Provides documentation for a command \n" +
 "    \n" +
@@ -27,7 +28,8 @@ MAINHELP = CTSCLI.Utilities.BANNER +
 CTSCLI.Commands = {
   "scrape": new CTSCLI.Scrape(),
   "stitch": new CTSCLI.Stitch(),
-  "fetch": new CTSCLI.Fetch()
+  "fetch": new CTSCLI.Fetch(),
+  "mockup": new CTSCLI.Mockup()
 };
 
 /**

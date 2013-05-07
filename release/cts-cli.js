@@ -7,7 +7,7 @@
  * @license MIT <http://github.com/cts/cts-cli/blob/master/LICENSE.txt>
  * @link 
  * @module cts-cli
- * @version 1.0.2
+ * @version 1.0.3
  */
 (function() {
 
@@ -18,6 +18,7 @@ var request      = require('request');
 var prettyjson   = require('prettyjson');
 var optimist     = require('optimist');
 var url          = require('url');
+var _            = require("underscore");
 
 var lib = path.join(path.dirname(fs.realpathSync(__filename)), "..", "lib");
 
@@ -63,8 +64,11 @@ CTSCLI.Utilities.githubUrlToRealUrl = function(url) {
 
 /* Omnibus file loading.
  */
-CTSCLI.Utilities.fetchFile = function(fileRef, cbSuccess, cbError) {
-  if ((typeof fileRef === undefined) || (fileRef === "")) {
+CTSCLI.Utilities.fetchFile = function(fileRef, cbSuccess, cbError, kind) {
+  if (typeof kind == 'undefined') {
+    kind = 'utf-8';
+  }
+  if ((typeof fileRef === 'undefined') || (fileRef === "")) {
     cbError(CTSCLI.Utilities.ERROR404 + "Empty file spec.");
   } else {
     if (fileRef.indexOf("github://") === 0) {
@@ -76,7 +80,15 @@ CTSCLI.Utilities.fetchFile = function(fileRef, cbSuccess, cbError) {
       }
     } else if ((fileRef.indexOf("http://") === 0) ||
                (fileRef.indexOf("https://") === 0)) {
-      request({uri:fileRef}, function(err, response, body) {
+      var settings = {
+        uri: fileRef
+      };
+
+      if (kind == 'binary') {
+        settings.encoding = null;
+      }
+
+      request(settings, function(err, response, body) {
         if (err) {
           cbError(CTSCLI.Utilities.ERROR404 + "  Could not fetch file\n" +
                   "  Response code: " + response.statusCode + "\n");
@@ -86,7 +98,7 @@ CTSCLI.Utilities.fetchFile = function(fileRef, cbSuccess, cbError) {
       });
     } else {
       // Load from FS
-      fs.readFile(fileRef, 'utf-8', function(err, data) {
+      fs.readFile(fileRef, kind, function(err, data) {
         if (err) {
           cbError(CTSCLI.Utilities.ERROR404 + "  Coult not read file: " + fileRef + "\n" + err);
         } else {
@@ -350,6 +362,7 @@ MAINHELP = CTSCLI.Utilities.BANNER +
 "    \n" +
 "     scrape     Scrapes content from a web page\n" +
 "     stitch     Stitches together web documents\n" +
+"     mockup     Utilities for managing mockups\n" +
 "     fetch      Fetches a web document\n" +
 "     help       Provides documentation for a command \n" +
 "    \n" +
@@ -363,7 +376,8 @@ MAINHELP = CTSCLI.Utilities.BANNER +
 CTSCLI.Commands = {
   "scrape": new CTSCLI.Scrape(),
   "stitch": new CTSCLI.Stitch(),
-  "fetch": new CTSCLI.Fetch()
+  "fetch": new CTSCLI.Fetch(),
+  "mockuo": new CTSCLI.Mockup()
 };
 
 /**
