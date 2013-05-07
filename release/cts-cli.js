@@ -325,7 +325,6 @@ CTSCLI.Install.prototype.help = function() {
     "  =======\n\n" +
     "  Installs an HTML mockup.\n\n" +
     "  Usage: \n\n" +
-    "\n" +
     "    cts install <URL>   \n\n" +
     "    The URL can be: \n" +
     "      * A <Type>/<Name> index into the official CTS mockup repository\n" +
@@ -341,13 +340,7 @@ CTSCLI.Install.prototype.run = function(argv) {
     return;
   }
 
-  var command = argv._[1];
-  var fileref = argv._[2];
-
-  if (command != "install") {
-    this.help();
-    return;
-  }
+  var fileref = argv._[1];
 
   var self = this;
 
