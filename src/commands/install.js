@@ -8,7 +8,7 @@ CTSCLI.Install = function() {
 CTSCLI.Install.prototype.help = function() {
   console.log(CTSCLI.Utilities.BANNER + 
     "  INSTALL\n" +
-    "  =======\n\n" 
+    "  =======\n\n" +
     "  Installs an HTML mockup.\n\n" +
     "  Usage: \n\n" +
     "\n" +
