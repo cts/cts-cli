@@ -28,7 +28,7 @@ CTSCLI.Utilities.githubUrlToRealUrl = function(url) {
   parts.shift(); // bye http
   parts.shift(); // bye //
   var user = parts.shift();
-  var repo = parts.shirt();
+  var repo = parts.shift();
   var file = parts.join("/");
   return "https://raw.github.com/" + user + "/" + repo + "/master/" + file;
 };
@@ -44,7 +44,7 @@ CTSCLI.Utilities.fetchFile = function(fileRef, cbSuccess, cbError) {
       if (url === null) {
         cbError(CTSCLI.Utilities.ERROR404 + "  Invalid github URL: " + fileRef);
       } else {
-        fetchRemoteFile(url, cbSuccess, cbError);
+        CTSCLI.Utilities.fetchFile(url, cbSuccess, cbError);
       }
     } else if ((fileRef.indexOf("http://") === 0) ||
                (fileRef.indexOf("https://") === 0)) {

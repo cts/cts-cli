@@ -1,12 +1,12 @@
 /**
-* CTS-cli
+* cts-cli
  * Cascading Tree Sheets command line interface
  *
  * @author Ted Benson 
  * @copyright Ted Benson 2013
  * @license MIT <http://github.com/cts/cts-cli/blob/master/LICENSE.txt>
  * @link 
- * @module CTS-cli
+ * @module cts-cli
  * @version 1.0.2
  */
 (function() {
@@ -56,7 +56,7 @@ CTSCLI.Utilities.githubUrlToRealUrl = function(url) {
   parts.shift(); // bye http
   parts.shift(); // bye //
   var user = parts.shift();
-  var repo = parts.shirt();
+  var repo = parts.shift();
   var file = parts.join("/");
   return "https://raw.github.com/" + user + "/" + repo + "/master/" + file;
 };
@@ -72,7 +72,7 @@ CTSCLI.Utilities.fetchFile = function(fileRef, cbSuccess, cbError) {
       if (url === null) {
         cbError(CTSCLI.Utilities.ERROR404 + "  Invalid github URL: " + fileRef);
       } else {
-        fetchRemoteFile(url, cbSuccess, cbError);
+        CTSCLI.Utilities.fetchFile(url, cbSuccess, cbError);
       }
     } else if ((fileRef.indexOf("http://") === 0) ||
                (fileRef.indexOf("https://") === 0)) {
@@ -162,13 +162,12 @@ if (typeof CTSCLI == "undefined") {
 CTSCLI.Scrape = function() {
 };
 
-
 CTSCLI.Scrape.prototype.help = function() {
   console.log(CTSCLI.Utilities.BANNER + 
-    "  Scrape Command Help \n" +
-    "\n" +
-    "  Usage: \n" +
-    "\n" +
+    "  SCRAPE\n" +
+    "  ======\n\n" +
+    "  Scrapes data from a web page.\n\n" +
+    "  Usage: \n\n" +
     "    cts scrape <URL> [CTS File]            \n" +
     "                                             \n" +
     "    Both the URL and the CTS File can either be: \n" +
@@ -187,8 +186,8 @@ CTSCLI.Scrape.prototype.help = function() {
     "                                              \n" +
     "  Example: \n" +
     " \n" +
-    "    dscrape github://cts/dscrape/examples/reddit.cts \\ \n" +
-    "            http://www.reddit.com \n");
+    "    cts scrape http://www.reddit.com \n\n" +
+    "    cts scrape http://www.reddit.com github://cts/dscrape/examples/reddit.cts\n\n"); 
 };
 
 CTSCLI.Scrape.prototype.run = function(argv) {
@@ -267,6 +266,74 @@ CTSCLI.Scrape.prototype.performExtraction = function(ctsFile, html, opts, cbSucc
 };
 
 
+if (typeof CTSCLI == "undefined") {
+  CTSCLI = {};
+} 
+
+CTSCLI.Stitch = function() {
+};
+
+CTSCLI.Stitch.prototype.help = function() {
+  console.log(CTSCLI.Utilities.BANNER + 
+    "  STITCH\n" +
+    "  ======\n\n" +
+    "  Stitches together a content document with a mockup document.\n\n" +
+    "  Usage: \n\n" +
+    "    cts stitch <CONTENT URL> [MOCKUP URL] [CTS File]        \n" +
+    "                                             \n" +
+    "    Both the URLs and the CTS File can either be: \n" +
+    "      * A path to a file on your local filesystem \n" +
+    "      * A URL \n" +
+    "      * A \"Github URL\" of the form github://user/repo/path/to/file.cts\n" +
+    "\n" +
+    "    If the [CTS File] argument is missing, CTS CLI will attempt to locate\n" +
+    "    an appropriate sheet for your mockup URL, if one has been registered.\n\n" +
+    "    If the [Mockup URL] argument is missing, CTS CLI will inspect the content\n" +
+    "    document for links to a mockup and CTS sheet embedded within.\n\n");
+};
+
+CTSCLI.Stitch.prototype.run = function(argv) {
+  if (argv._.length < 3) {
+    this.help();
+    return;
+  }
+};
+
+
+if (typeof CTSCLI == "undefined") {
+  CTSCLI = {};
+} 
+
+CTSCLI.Fetch = function() {
+};
+
+CTSCLI.Fetch.prototype.help = function() {
+  console.log(CTSCLI.Utilities.BANNER + 
+    "  FETCH\n" +
+    "  =====\n\n" +
+    "  Fetches the contents of a URL.\n\n" +
+    "  Usage: \n\n" +
+    "\n" +
+    "    cts fetch <URL>      \n\n" +
+    "    The URL can be: \n" +
+    "      * A path to a file on your local filesystem \n" +
+    "      * A URL \n" +
+    "      * A \"Github URL\" of the form github://user/repo/path/to/file.cts\n\n");
+};
+
+CTSCLI.Fetch.prototype.run = function(argv) {
+  if (argv._.length < 2) {
+    this.help();
+    return;
+  }
+
+  var fileref = argv._[1];
+
+  CTSCLI.Utilities.fetchFile(fileref, console.log, console.log);
+};
+
+
+
 /*
  * DScrape: Declarative Web Scraping.
  * Copyright 2013 Ted Benson <eob@csail.mit.edu>
@@ -281,19 +348,22 @@ MAINHELP = CTSCLI.Utilities.BANNER +
 "    \n" +
 "   Supported Commands: \n" +
 "    \n" +
-"     scrape     Scrapes content from a web page \n" +
+"     scrape     Scrapes content from a web page\n" +
+"     stitch     Stitches together web documents\n" +
+"     fetch      Fetches a web document\n" +
 "     help       Provides documentation for a command \n" +
 "    \n" +
 "   To see documentation for a particular <COMMAND>, type: \n" +
 "    \n" +
-"     cts help <COMMAND> \n" +
-"    \n"; 
+"     cts help <COMMAND>\n\n";
 
 /**
  * Registry of commands supported by CTS CLI.
  */
 CTSCLI.Commands = {
-  "scrape": new CTSCLI.Scrape()
+  "scrape": new CTSCLI.Scrape(),
+  "stitch": new CTSCLI.Stitch(),
+  "fetch": new CTSCLI.Fetch()
 };
 
 /**

@@ -26,6 +26,8 @@ module.exports = function(grunt) {
           "src/fragments/prefix._js",
           "src/utilities.js",
           "src/commands/scrape.js",
+          "src/commands/stitch.js",
+          "src/commands/fetch.js",
           "src/cts-cli.js",
           "src/fragments/postfix._js",
         ],

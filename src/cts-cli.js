@@ -12,19 +12,22 @@ MAINHELP = CTSCLI.Utilities.BANNER +
 "    \n" +
 "   Supported Commands: \n" +
 "    \n" +
-"     scrape     Scrapes content from a web page \n" +
+"     scrape     Scrapes content from a web page\n" +
+"     stitch     Stitches together web documents\n" +
+"     fetch      Fetches a web document\n" +
 "     help       Provides documentation for a command \n" +
 "    \n" +
 "   To see documentation for a particular <COMMAND>, type: \n" +
 "    \n" +
-"     cts help <COMMAND> \n" +
-"    \n"; 
+"     cts help <COMMAND>\n\n";
 
 /**
  * Registry of commands supported by CTS CLI.
  */
 CTSCLI.Commands = {
-  "scrape": new CTSCLI.Scrape()
+  "scrape": new CTSCLI.Scrape(),
+  "stitch": new CTSCLI.Stitch(),
+  "fetch": new CTSCLI.Fetch()
 };
 
 /**

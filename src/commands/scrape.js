@@ -7,10 +7,10 @@ CTSCLI.Scrape = function() {
 
 CTSCLI.Scrape.prototype.help = function() {
   console.log(CTSCLI.Utilities.BANNER + 
-    "  Scrape Command Help \n" +
-    "\n" +
-    "  Usage: \n" +
-    "\n" +
+    "  SCRAPE\n" +
+    "  ======\n\n" +
+    "  Scrapes data from a web page.\n\n" +
+    "  Usage: \n\n" +
     "    cts scrape <URL> [CTS File]            \n" +
     "                                             \n" +
     "    Both the URL and the CTS File can either be: \n" +
@@ -29,8 +29,8 @@ CTSCLI.Scrape.prototype.help = function() {
     "                                              \n" +
     "  Example: \n" +
     " \n" +
-    "    dscrape github://cts/dscrape/examples/reddit.cts \\ \n" +
-    "            http://www.reddit.com \n");
+    "    cts scrape http://www.reddit.com \n\n" +
+    "    cts scrape http://www.reddit.com github://cts/dscrape/examples/reddit.cts\n\n"); 
 };
 
 CTSCLI.Scrape.prototype.run = function(argv) {
