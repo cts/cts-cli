@@ -7,7 +7,7 @@
  * @license MIT <http://github.com/cts/cts-cli/blob/master/LICENSE.txt>
  * @link 
  * @module cts-cli
- * @version 1.0.3
+ * @version 1.0.4
  */
 (function() {
 
@@ -339,10 +339,14 @@ CTSCLI.Install.prototype.run = function(argv) {
     this.help();
     return;
   }
-
-  var fileref = argv._[1];
-
+  var fileref;
   var self = this;
+  
+  if (argv._.length == 2) {
+    fileref = argv._[1];
+  } else if (argv._.length == 3) {
+    fileref = "https://raw.github.com/cts/themes/master/" + argv._[1] + "/" + argv._[2];
+  }
 
   CTSCLI.Utilities.fetchFile(
       fileref,
