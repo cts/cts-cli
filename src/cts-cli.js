@@ -1,5 +1,5 @@
 /*
- * DScrape: Declarative Web Scraping.
+ * CTS Command Line Interface
  * Copyright 2013 Ted Benson <eob@csail.mit.edu>
  */
 
@@ -14,6 +14,7 @@ MAINHELP = CTSCLI.Utilities.BANNER +
 "    \n" +
 "     scrape     Scrapes content from a web page\n" +
 "     stitch     Stitches together web documents\n" +
+"     setup      Setups up Tree Sheet-based theming\n" +
 "     install    Installs a mockup\n" +
 "     fetch      Fetches a web document\n" +
 "     help       Provides documentation for a command \n" +
@@ -29,7 +30,8 @@ CTSCLI.Commands = {
   "scrape": new CTSCLI.Scrape(),
   "stitch": new CTSCLI.Stitch(),
   "fetch": new CTSCLI.Fetch(),
-  "install": new CTSCLI.Install()
+  "install": new CTSCLI.Install(),
+  "setup": new CTSCLI.Setup()
 };
 
 /**

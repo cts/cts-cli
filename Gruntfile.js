@@ -27,6 +27,7 @@ module.exports = function(grunt) {
           "src/utilities.js",
           "src/commands/scrape.js",
           "src/commands/stitch.js",
+          "src/commands/setup.js",
           "src/commands/install.js",
           "src/commands/fetch.js",
           "src/cts-cli.js",
