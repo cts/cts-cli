@@ -136,4 +136,3 @@ CTSCLI.Utilities.printData = function(data, opts) {
   }
   CTSCLI.Utilities.printLine(formatted);
 };
-
