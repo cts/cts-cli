@@ -7,7 +7,7 @@
  * @license MIT <http://github.com/cts/cts-cli/blob/master/LICENSE.txt>
  * @link 
  * @module cts-cli
- * @version 1.0.5
+ * @version 1.0.6
  */
 (function() {
 
@@ -164,6 +164,95 @@ CTSCLI.Utilities.printData = function(data, opts) {
     formatted = prettyjson.render(data);
   }
   CTSCLI.Utilities.printLine(formatted);
+};
+
+/**
+ * Installs a mockup given a package.
+ */
+CTSCLI.Utilities.installPackage = function(specUrl, spec, opts) {
+  if (typeof opts == 'undefined') {
+    opts = {};
+  }
+
+  var installInCurrentDirectory = false;
+  if (opts.installInCurrentDirectory) {
+    installInCurrentDirectory = true;
+  }
+
+  var backupFiles = false;
+  if (opts.backupFiles) {
+    backupFiles= true;
+  }
+
+  var parts = specUrl.split("/");
+  parts.pop();
+  var specpath = parts.join("/");
+  if (typeof spec.files != 'undefined') {
+    if (typeof spec.name != 'undefined') {
+      var basepath = [];
+      if (! installInCurrentDirectory) {
+        basepath = ['mockups', spec.name];
+      }
+      this.installFiles(specpath, basepath, spec.files);
+    }
+  }
+};
+
+CTSCLI.Utilities.installFiles = function(remotePath, intoPath, dirSpec) {
+  var self = this;
+  _.each(dirSpec, function(value, key) {
+    if (_.isArray(value)) {
+      CTSCLI.Utilities.installFiles(remotePath, intoPath, value);
+    } else if (_.isObject(value)) {
+      _.each(value, function(newDirSpec, subdir) {
+        var pathClone = intoPath.slice(0);
+        pathClone.push(subdir);
+        CTSCLI.Utilities.installFiles(remotePath, pathClone, newDirSpec);
+      });
+    } else {
+      var pathClone = intoPath.slice(0);
+      self.installFile(remotePath, pathClone, value, value, 'utf8');
+    }
+  });
+};
+
+CTSCLI.Utilities.installFile = function(remotePath, intoPath, fname, fileSpec, kind) {
+  var self = this;
+  if (typeof fileSpec == 'string') {
+    fileSpec = remotePath + '/' + fileSpec;
+  }
+  CTSCLI.Utilities.fetchFile(fileSpec,
+      function(contents) {
+        self.saveContents(intoPath, fname, contents, kind);
+      },
+      function(error) {
+        console.log(error);
+      },
+      kind
+  );
+};
+
+CTSCLI.Utilities.saveContents = function(intoPath, fname, contents, kind) {
+  this.ensurePath(intoPath);
+  intoPath.push(fname);
+  var fullPath = path.join.apply(this, intoPath);
+  if (kind == 'binary') {
+    // the contents is a buffer object
+    var data = contents.toString('binary');
+    fs.writeFileSync(fullPath, data, 'binary');
+  } else {
+    fs.writeFileSync(fullPath, contents, kind);
+  }
+};
+
+CTSCLI.Utilities.ensurePath = function(p) {
+  for (var i = 1; i < p.length + 1; i++) {
+    var parts = p.slice(0, i);
+    var pathStr = path.join.apply(this, parts);
+    if (! fs.existsSync(pathStr)) {
+      fs.mkdirSync(pathStr);
+    }
+  }
 };
 
 if (typeof CTSCLI == "undefined") {
@@ -334,12 +423,14 @@ CTSCLI.Setup.prototype.help = function() {
 
 CTSCLI.Setup.prototype.run = function(argv) {
   var self = this;
+  // argv._[0] == "setup" if we got here...
+  // because cts-cli.js made that so.
   if (argv._.length == 2) {
     var envType = argv._[1];
     if (envType == 'jekyll') {
       this.setupJekyll();
     } else {
-      this.htlp();
+      this.help();
     }
   } else {
     this.help();
@@ -354,11 +445,57 @@ CTSCLI.Setup.prototype.setupJekyll = function() {
     // TODO(jessica)
     //  - Install the tree sheets + jekyll theme file (the one that essentially
     //    outputs a HTML page using the right microformat.
+
+    // Make use of the CTSCLI.Utilities.installPackage function to fetch 
+    // mockups/blog/_jekyll/package.json
+    // BUT!!
+    // Change (add an option to) CTSCLI.Utilities.installPackage so that we can
+    // tell it to check for the existence of a file FIRST and, if it finds that file,
+    // rename it to FILE-OLD.extension.
     //
+    // I.e., right now if you already have _layouts/post.html and package.json specifies
+    // that file, it will blow away your existing file. Add a parameter to the 
+    // installPackage method so that instead it will move it to _layouts/post-OLD.html
+    // first.
+    //
+    // call CTSCLI.Utilities.installPackage with a installInCurrentDirecory of TRUE
+
+    // Somewhere..
+
+    var packageUrl = "https://raw.github.com/cts/mockups/master/blog/_jekyll/package.json";
+    CTSCLI.Utilities.fetchFile(
+      fileref,
+      function(str) {
+        CTSCLI.Utilities.installPackage(
+          packageUrl,
+          JSON.parse(str),
+          {
+            backup: true,
+            installInCurrentDirectory: true
+          }
+        );
+      },
+      console.log);
+
+    // STEP 2!!!!!!!!!!!!!!!!!!!!!!!!
     //  - This is going to be a bit tricky because it may involve opening up files
     //    and changing their contents (e.g., the _config.yml file) so we want to be
     //    extra safe and make backups of them.
-    
+
+    // Think about a good default.
+    // This should probably be:
+    // 1. Edit _config.yml to specify a theme
+    // 2. Download that theme (mog, or whatever you want good default to be).
+    //    Manually call installPackage for this with the URL of a theme package.
+    // Look at install.js for how to grab a package and install it.
+    // Both optional arguments are false for this one.
+
+
+    // When done.. 
+    // should be able to start with a brand new jekyll installation (no cts!)
+    // call:
+    // cts setup jekyll
+    // and then you're using cts theme with a default theme of your choosing
   } else {
     console.log("Error: This doesn't seem to be a Jekyll environment.");
   }
@@ -372,6 +509,7 @@ CTSCLI.Setup.prototype.setupJekyll = function() {
  *  boolean    Whether or not the current working directory is a Jekyll environment.
  */
 CTSCLI.Setup.prototype.isJekyllEnvironment = function() {
+  // TODO: is this right?
   var currentDirectory = process.cwd();
   var configYml = path.join(currentDirectory, "_config.yml");
   return fs.existsSync(configYml);
@@ -413,89 +551,17 @@ CTSCLI.Install.prototype.run = function(argv) {
     fileref = argv._[1];
   } else if (argv._.length == 3) {
     fileref = "https://raw.github.com/cts/mockups/master/" + argv._[1] + "/" + argv._[2] + "/package.json";
+  } else {
+    this.help();
+    return;
   }
 
   CTSCLI.Utilities.fetchFile(
       fileref,
       function(str) {
-        self.installPackage(fileref, JSON.parse(str));
+        CTSCLI.Utilities.installPackage(fileref, JSON.parse(str));
       },
       console.log);
-};
-
-/**
- * Installs a mockup given a package.
- *
- * TODO(eob): Implement.
- */
-CTSCLI.Install.prototype.installPackage = function(specUrl, spec) {
-  var parts = specUrl.split("/");
-  parts.pop();
-  var specpath = parts.join("/");
-  if (typeof spec.files != 'undefined') {
-    if (typeof spec.name != 'undefined') {
-      var basepath = ['mockups', spec.name];
-      this.installFiles(specpath, basepath, spec.files);
-    }
-  }
-};
-
-CTSCLI.Install.prototype.installFiles = function(remotePath, intoPath, dirSpec) {
-  var self = this;
-  _.each(dirSpec, function(value, key) {
-    var pathClone = intoPath.slice(0);
-    if (_.isArray(value)) {
-      var fileSpec = value[0];
-      var fileKind = value[1];
-      self.installFile(remotePath, pathClone, key, fileSpec, fileKind);
-    } else if (_.isObject(value)) {
-      // This is a directory
-      pathClone.push(key);
-      var newRemotePath = remotePath + '/' + key;
-      self.installFiles(newRemotePath, pathClone, value);
-    } else {
-      self.installFile(remotePath, pathClone, value, value, 'utf8');
-    }
-  });
-};
-
-CTSCLI.Install.prototype.installFile = function(remotePath, intoPath, fname, fileSpec, kind) {
-  var self = this;
-  if (typeof fileSpec == 'string') {
-    fileSpec = remotePath + '/' + fileSpec;
-  }
-  CTSCLI.Utilities.fetchFile(fileSpec,
-      function(contents) {
-        self.saveContents(intoPath, fname, contents, kind);
-      },
-      function(error) {
-        console.log(error);
-      },
-      kind
-  );
-};
-
-CTSCLI.Install.prototype.saveContents = function(intoPath, fname, contents, kind) {
-  this.ensurePath(intoPath);
-  intoPath.push(fname);
-  var fullPath = path.join.apply(this, intoPath);
-  if (kind == 'binary') {
-    // the contents is a buffer object
-    var data = contents.toString('binary');
-    fs.writeFileSync(fullPath, data, 'binary');
-  } else {
-    fs.writeFileSync(fullPath, contents, kind);
-  }
-};
-
-CTSCLI.Install.prototype.ensurePath = function(p) {
-  for (var i = 1; i < p.length + 1; i++) {
-    var parts = p.slice(0, i);
-    var pathStr = path.join.apply(this, parts);
-    if (! fs.existsSync(pathStr)) {
-      fs.mkdirSync(pathStr);
-    }
-  }
 };
 
 if (typeof CTSCLI == "undefined") {

@@ -136,3 +136,92 @@ CTSCLI.Utilities.printData = function(data, opts) {
   }
   CTSCLI.Utilities.printLine(formatted);
 };
+
+/**
+ * Installs a mockup given a package.
+ */
+CTSCLI.Utilities.installPackage = function(specUrl, spec, opts) {
+  if (typeof opts == 'undefined') {
+    opts = {};
+  }
+
+  var installInCurrentDirectory = false;
+  if (opts.installInCurrentDirectory) {
+    installInCurrentDirectory = true;
+  }
+
+  var backupFiles = false;
+  if (opts.backupFiles) {
+    backupFiles= true;
+  }
+
+  var parts = specUrl.split("/");
+  parts.pop();
+  var specpath = parts.join("/");
+  if (typeof spec.files != 'undefined') {
+    if (typeof spec.name != 'undefined') {
+      var basepath = [];
+      if (! installInCurrentDirectory) {
+        basepath = ['mockups', spec.name];
+      }
+      this.installFiles(specpath, basepath, spec.files);
+    }
+  }
+};
+
+CTSCLI.Utilities.installFiles = function(remotePath, intoPath, dirSpec) {
+  var self = this;
+  _.each(dirSpec, function(value, key) {
+    if (_.isArray(value)) {
+      CTSCLI.Utilities.installFiles(remotePath, intoPath, value);
+    } else if (_.isObject(value)) {
+      _.each(value, function(newDirSpec, subdir) {
+        var pathClone = intoPath.slice(0);
+        pathClone.push(subdir);
+        CTSCLI.Utilities.installFiles(remotePath, pathClone, newDirSpec);
+      });
+    } else {
+      var pathClone = intoPath.slice(0);
+      self.installFile(remotePath, pathClone, value, value, 'utf8');
+    }
+  });
+};
+
+CTSCLI.Utilities.installFile = function(remotePath, intoPath, fname, fileSpec, kind) {
+  var self = this;
+  if (typeof fileSpec == 'string') {
+    fileSpec = remotePath + '/' + fileSpec;
+  }
+  CTSCLI.Utilities.fetchFile(fileSpec,
+      function(contents) {
+        self.saveContents(intoPath, fname, contents, kind);
+      },
+      function(error) {
+        console.log(error);
+      },
+      kind
+  );
+};
+
+CTSCLI.Utilities.saveContents = function(intoPath, fname, contents, kind) {
+  this.ensurePath(intoPath);
+  intoPath.push(fname);
+  var fullPath = path.join.apply(this, intoPath);
+  if (kind == 'binary') {
+    // the contents is a buffer object
+    var data = contents.toString('binary');
+    fs.writeFileSync(fullPath, data, 'binary');
+  } else {
+    fs.writeFileSync(fullPath, contents, kind);
+  }
+};
+
+CTSCLI.Utilities.ensurePath = function(p) {
+  for (var i = 1; i < p.length + 1; i++) {
+    var parts = p.slice(0, i);
+    var pathStr = path.join.apply(this, parts);
+    if (! fs.existsSync(pathStr)) {
+      fs.mkdirSync(pathStr);
+    }
+  }
+};
