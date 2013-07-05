@@ -174,9 +174,9 @@ CTSCLI.Utilities.installPackage = function(specUrl, spec, opts) {
     opts = {};
   }
 
-  var installInCurrentDirectory = false;
-  if (opts.installInCurrentDirectory) {
-    installInCurrentDirectory = true;
+  var basepath = [];
+  if (typeof opts.basepath != 'undefined') {
+    basepath = opts.basepath;
   }
 
   var backupFiles = false;
@@ -188,13 +188,7 @@ CTSCLI.Utilities.installPackage = function(specUrl, spec, opts) {
   parts.pop();
   var specpath = parts.join("/");
   if (typeof spec.files != 'undefined') {
-    if (typeof spec.name != 'undefined') {
-      var basepath = [];
-      if (! installInCurrentDirectory) {
-        basepath = ['mockups', spec.name];
-      }
-      this.installFiles(specpath, basepath, spec.files);
-    }
+    this.installFiles(specpath, basepath, spec.files);
   }
 };
 
@@ -469,10 +463,7 @@ CTSCLI.Setup.prototype.setupJekyll = function() {
         CTSCLI.Utilities.installPackage(
           packageUrl,
           JSON.parse(str),
-          {
-            backup: true,
-            installInCurrentDirectory: true
-          }
+          { backup: true }
         );
       },
       console.log);
@@ -496,6 +487,18 @@ CTSCLI.Setup.prototype.setupJekyll = function() {
     // call:
     // cts setup jekyll
     // and then you're using cts theme with a default theme of your choosing
+
+    // When you modify the CTSCLI project, how do you RUN those modifications?
+    // 1. always run "grunt" after you make a change
+    //  (search for node grunt for install instructions)
+    //
+    // Note! any line numbers with errors are talking about release/cts-cli.js
+    // you can look at this for a reference of what is wrong, but you'll have to fix
+    // it in the src/ directory and then re-run grunt.
+
+    // also, reemmber to run using ./cts-cli/bin/cts command instead of the global command
+    // in your path (to make sure you are using the devleopment version)
+
   } else {
     console.log("Error: This doesn't seem to be a Jekyll environment.");
   }
@@ -559,7 +562,15 @@ CTSCLI.Install.prototype.run = function(argv) {
   CTSCLI.Utilities.fetchFile(
       fileref,
       function(str) {
-        CTSCLI.Utilities.installPackage(fileref, JSON.parse(str));
+        var packageSpec = JSON.parse(str);
+        var basepath = [];
+        if (typeof packageSpec.name != 'undefined') {
+          basepath = ['mockups', spec.name];
+        }
+
+        CTSCLI.Utilities.installPackage(fileref, packageSpec, {
+          basepath: basepath
+        });
       },
       console.log);
 };
