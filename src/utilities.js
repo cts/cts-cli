@@ -145,9 +145,9 @@ CTSCLI.Utilities.installPackage = function(specUrl, spec, opts) {
     opts = {};
   }
 
-  var installInCurrentDirectory = false;
-  if (opts.installInCurrentDirectory) {
-    installInCurrentDirectory = true;
+  var basepath = [];
+  if (typeof opts.basepath != 'undefined') {
+    basepath = opts.basepath;
   }
 
   var backupFiles = false;
@@ -159,13 +159,7 @@ CTSCLI.Utilities.installPackage = function(specUrl, spec, opts) {
   parts.pop();
   var specpath = parts.join("/");
   if (typeof spec.files != 'undefined') {
-    if (typeof spec.name != 'undefined') {
-      var basepath = [];
-      if (! installInCurrentDirectory) {
-        basepath = ['mockups', spec.name];
-      }
-      this.installFiles(specpath, basepath, spec.files);
-    }
+    this.installFiles(specpath, basepath, spec.files);
   }
 };
 

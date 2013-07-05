@@ -42,7 +42,15 @@ CTSCLI.Install.prototype.run = function(argv) {
   CTSCLI.Utilities.fetchFile(
       fileref,
       function(str) {
-        CTSCLI.Utilities.installPackage(fileref, JSON.parse(str));
+        var packageSpec = JSON.parse(str);
+        var basepath = [];
+        if (typeof packageSpec.name != 'undefined') {
+          basepath = ['mockups', spec.name];
+        }
+
+        CTSCLI.Utilities.installPackage(fileref, packageSpec, {
+          basepath: basepath
+        });
       },
       console.log);
 };

@@ -67,10 +67,7 @@ CTSCLI.Setup.prototype.setupJekyll = function() {
         CTSCLI.Utilities.installPackage(
           packageUrl,
           JSON.parse(str),
-          {
-            backup: true,
-            installInCurrentDirectory: true
-          }
+          { backup: true }
         );
       },
       console.log);
