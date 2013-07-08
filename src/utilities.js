@@ -151,7 +151,7 @@ CTSCLI.Utilities.installPackage = function(specUrl, spec, opts) {
   }
 
   var backup = false;
-  if (opts.backupFiles) {
+  if (opts.backup) {
     backup= true;
   }
 
@@ -167,12 +167,12 @@ CTSCLI.Utilities.installFiles = function(remotePath, intoPath, dirSpec, backup) 
   var self = this;
   _.each(dirSpec, function(value, key) {
     if (_.isArray(value)) {
-      CTSCLI.Utilities.installFiles(remotePath, intoPath, value);
+      CTSCLI.Utilities.installFiles(remotePath, intoPath, value, backup);
     } else if (_.isObject(value)) {
       _.each(value, function(newDirSpec, subdir) {
         var pathClone = intoPath.slice(0);
         pathClone.push(subdir);
-        CTSCLI.Utilities.installFiles(remotePath, pathClone, newDirSpec);
+        CTSCLI.Utilities.installFiles(remotePath, pathClone, newDirSpec, backup);
       });
     } else {
       var pathClone = intoPath.slice(0);
@@ -199,13 +199,21 @@ CTSCLI.Utilities.installFile = function(remotePath, intoPath, fname, fileSpec, k
 
 CTSCLI.Utilities.saveContents = function(intoPath, fname, contents, kind, backup) {
   this.ensurePath(intoPath);
+  var fullPath = intoPath.slice(0);
+  fullPath.push(fname);
+  fullPath = path.join.apply(this, fullPath);
   //if file already exists, add "-old" to file name
-  if (fs.existsSync(intoPath.push(fname)) && backup) {
-    var extIndex = fname.indexOf(".");
-    fname = fname.substring(0, extIndex)+"-old"+fname.substring(extIndex);
+  if (fs.existsSync(fullPath) && backup) {
+    var extIndex = fname.lastIndexOf(".");
+    if (extIndex == -1) {
+      extIndex = fname.length;
+    }
+    var backupPath = intoPath.slice(0);
+    backupPath.push(fname.substring(0, extIndex)+"-old"+fname.substring(extIndex));
+    backupPath = path.join.apply(this, backupPath);
+    fs.renameSync(fullPath, backupPath);
   }
-  intoPath.push(fname);
-  var fullPath = path.join.apply(this, intoPath);
+  
   if (kind == 'binary') {
     // the contents is a buffer object
     var data = contents.toString('binary');

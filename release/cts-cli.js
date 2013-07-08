@@ -179,45 +179,45 @@ CTSCLI.Utilities.installPackage = function(specUrl, spec, opts) {
     basepath = opts.basepath;
   }
 
-  var backupFiles = false;
-  if (opts.backupFiles) {
-    backupFiles= true;
+  var backup = false;
+  if (opts.backup) {
+    backup= true;
   }
 
   var parts = specUrl.split("/");
   parts.pop();
   var specpath = parts.join("/");
   if (typeof spec.files != 'undefined') {
-    this.installFiles(specpath, basepath, spec.files);
+    this.installFiles(specpath, basepath, spec.files, backup);
   }
 };
 
-CTSCLI.Utilities.installFiles = function(remotePath, intoPath, dirSpec) {
+CTSCLI.Utilities.installFiles = function(remotePath, intoPath, dirSpec, backup) {
   var self = this;
   _.each(dirSpec, function(value, key) {
     if (_.isArray(value)) {
-      CTSCLI.Utilities.installFiles(remotePath, intoPath, value);
+      CTSCLI.Utilities.installFiles(remotePath, intoPath, value, backup);
     } else if (_.isObject(value)) {
       _.each(value, function(newDirSpec, subdir) {
         var pathClone = intoPath.slice(0);
         pathClone.push(subdir);
-        CTSCLI.Utilities.installFiles(remotePath, pathClone, newDirSpec);
+        CTSCLI.Utilities.installFiles(remotePath, pathClone, newDirSpec, backup);
       });
     } else {
       var pathClone = intoPath.slice(0);
-      self.installFile(remotePath, pathClone, value, value, 'utf8');
+      self.installFile(remotePath, pathClone, value, value, 'utf8', backup);
     }
   });
 };
 
-CTSCLI.Utilities.installFile = function(remotePath, intoPath, fname, fileSpec, kind) {
+CTSCLI.Utilities.installFile = function(remotePath, intoPath, fname, fileSpec, kind, backup) {
   var self = this;
   if (typeof fileSpec == 'string') {
     fileSpec = remotePath + '/' + fileSpec;
   }
   CTSCLI.Utilities.fetchFile(fileSpec,
       function(contents) {
-        self.saveContents(intoPath, fname, contents, kind);
+        self.saveContents(intoPath, fname, contents, kind, backup);
       },
       function(error) {
         console.log(error);
@@ -226,10 +226,23 @@ CTSCLI.Utilities.installFile = function(remotePath, intoPath, fname, fileSpec, k
   );
 };
 
-CTSCLI.Utilities.saveContents = function(intoPath, fname, contents, kind) {
+CTSCLI.Utilities.saveContents = function(intoPath, fname, contents, kind, backup) {
   this.ensurePath(intoPath);
-  intoPath.push(fname);
-  var fullPath = path.join.apply(this, intoPath);
+  var fullPath = intoPath.slice(0);
+  fullPath.push(fname);
+  fullPath = path.join.apply(this, fullPath);
+  //if file already exists, add "-old" to file name
+  if (fs.existsSync(fullPath) && backup) {
+    var extIndex = fname.lastIndexOf(".");
+    if (extIndex == -1) {
+      extIndex = fname.length;
+    }
+    var backupPath = intoPath.slice(0);
+    backupPath.push(fname.substring(0, extIndex)+"-old"+fname.substring(extIndex));
+    backupPath = path.join.apply(this, backupPath);
+    fs.renameSync(fullPath, backupPath);
+  }
+  
   if (kind == 'binary') {
     // the contents is a buffer object
     var data = contents.toString('binary');
@@ -412,7 +425,9 @@ CTSCLI.Setup.prototype.help = function() {
     "  Sets up your project to use tree sheet-based mockups.\n\n" +
     "  Supported setup commands: \n\n" +
     "    cts setup jekyll   \n" +
-    "      * Sets up tree sheets for the Jekyll blogging platform\n");
+    "      * Sets up tree sheets for the Jekyll blogging platform\n" +
+    "    cts setup jekyll --new   \n" +
+    "      * Sets up tree sheets for the Jekyll blogging platform and creates jekyll environment\n");
 };
 
 CTSCLI.Setup.prototype.run = function(argv) {
@@ -422,7 +437,8 @@ CTSCLI.Setup.prototype.run = function(argv) {
   if (argv._.length == 2) {
     var envType = argv._[1];
     if (envType == 'jekyll') {
-      this.setupJekyll();
+      var newJekyll = argv["new"];
+      this.setupJekyll(newJekyll);
     } else {
       this.help();
     }
@@ -431,10 +447,18 @@ CTSCLI.Setup.prototype.run = function(argv) {
   }
 };
 
-CTSCLI.Setup.prototype.setupJekyll = function() {
+CTSCLI.Setup.prototype.setupJekyll = function(newJekyll) {
+  if (typeof newJekyll == 'undefined') {
+    newJekyll = false;
+  }
   console.log("Checking for Jekyll environment..");
-  if (this.isJekyllEnvironment()) {
+  if ((this.isJekyllEnvironment() && !newJekyll) || (!this.isJekyllEnvironment() && newJekyll)) {
     console.log("Installing Treesheets Jekyll theme");
+    if (!newJekyll) {
+      this.editConfig();
+    } else {
+      this.makeConfig();
+    }
 
     // TODO(jessica)
     //  - Install the tree sheets + jekyll theme file (the one that essentially
@@ -458,7 +482,7 @@ CTSCLI.Setup.prototype.setupJekyll = function() {
 
     var packageUrl = "https://raw.github.com/cts/mockups/master/blog/_jekyll/package.json";
     CTSCLI.Utilities.fetchFile(
-      fileref,
+      packageUrl,
       function(str) {
         CTSCLI.Utilities.installPackage(
           packageUrl,
@@ -498,9 +522,23 @@ CTSCLI.Setup.prototype.setupJekyll = function() {
 
     // also, reemmber to run using ./cts-cli/bin/cts command instead of the global command
     // in your path (to make sure you are using the devleopment version)
+    
+    var mockupUrl = "https://raw.github.com/cts/mockups/master/blog/mog/package.json";
+    CTSCLI.Utilities.fetchFile(
+      mockupUrl,
+      function(str) {
+        CTSCLI.Utilities.installPackage(
+          mockupUrl,
+          JSON.parse(str),
+          { basepath:["mockups", "mog"] }
+        );
+      },
+      console.log);
 
-  } else {
+  } else if (!this.isJekyllEnvironment() && !newJekyll) {
     console.log("Error: This doesn't seem to be a Jekyll environment.");
+  } else if (this.isJekyllEnvironment() && newJekyll) {
+    console.log("Error: This seems to already be a jekyll environment.");
   }
 };
 
@@ -515,9 +553,30 @@ CTSCLI.Setup.prototype.isJekyllEnvironment = function() {
   // TODO: is this right?
   var currentDirectory = process.cwd();
   var configYml = path.join(currentDirectory, "_config.yml");
+  
   return fs.existsSync(configYml);
 };
 
+
+CTSCLI.Setup.prototype.editConfig = function() {
+  var currentDirectory = process.cwd();
+  var configYml = path.join(currentDirectory, "_config.yml");
+  fs.readFile(configYml, 'utf8', function (err,data) {
+    if(err) { 
+      console.log(err);
+    } else {
+      fs.renameSync(configYml, path.join(currentDirectory, "_config-old.yml"));
+      var endOfLine = require('os').EOL;
+      fs.writeFileSync(configYml, "theme: mog" + endOfLine + data);
+    }
+  });
+};
+CTSCLI.Setup.prototype.makeConfig = function() {
+  var currentDirectory = process.cwd();
+  var configYml = path.join(currentDirectory, "_config.yml");
+  var endOfLine = require('os').EOL;
+  fs.writeFileSync(configYml, "theme: mog");
+};
 if (typeof CTSCLI == "undefined") {
   CTSCLI = {};
 } 

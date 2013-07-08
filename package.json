@@ -40,7 +40,8 @@
     "contextify": "*",
     "prettyjson": "*",
     "optimist": "*",
-    "underscore": "*"
+    "underscore": "*",
+    "process": "*"
   },
   "devDependencies": {
     "grunt": "*",
