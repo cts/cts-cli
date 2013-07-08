@@ -150,20 +150,20 @@ CTSCLI.Utilities.installPackage = function(specUrl, spec, opts) {
     basepath = opts.basepath;
   }
 
-  var backupFiles = false;
+  var backup = false;
   if (opts.backupFiles) {
-    backupFiles= true;
+    backup= true;
   }
 
   var parts = specUrl.split("/");
   parts.pop();
   var specpath = parts.join("/");
   if (typeof spec.files != 'undefined') {
-    this.installFiles(specpath, basepath, spec.files);
+    this.installFiles(specpath, basepath, spec.files, backup);
   }
 };
 
-CTSCLI.Utilities.installFiles = function(remotePath, intoPath, dirSpec) {
+CTSCLI.Utilities.installFiles = function(remotePath, intoPath, dirSpec, backup) {
   var self = this;
   _.each(dirSpec, function(value, key) {
     if (_.isArray(value)) {
@@ -176,19 +176,19 @@ CTSCLI.Utilities.installFiles = function(remotePath, intoPath, dirSpec) {
       });
     } else {
       var pathClone = intoPath.slice(0);
-      self.installFile(remotePath, pathClone, value, value, 'utf8');
+      self.installFile(remotePath, pathClone, value, value, 'utf8', backup);
     }
   });
 };
 
-CTSCLI.Utilities.installFile = function(remotePath, intoPath, fname, fileSpec, kind) {
+CTSCLI.Utilities.installFile = function(remotePath, intoPath, fname, fileSpec, kind, backup) {
   var self = this;
   if (typeof fileSpec == 'string') {
     fileSpec = remotePath + '/' + fileSpec;
   }
   CTSCLI.Utilities.fetchFile(fileSpec,
       function(contents) {
-        self.saveContents(intoPath, fname, contents, kind);
+        self.saveContents(intoPath, fname, contents, kind, backup);
       },
       function(error) {
         console.log(error);
@@ -197,8 +197,13 @@ CTSCLI.Utilities.installFile = function(remotePath, intoPath, fname, fileSpec, k
   );
 };
 
-CTSCLI.Utilities.saveContents = function(intoPath, fname, contents, kind) {
+CTSCLI.Utilities.saveContents = function(intoPath, fname, contents, kind, backup) {
   this.ensurePath(intoPath);
+  //if file already exists, add "-old" to file name
+  if (fs.existsSync(intoPath.push(fname)) && backup) {
+    var extIndex = fname.indexOf(".");
+    fname = fname.substring(0, extIndex)+"-old"+fname.substring(extIndex);
+  }
   intoPath.push(fname);
   var fullPath = path.join.apply(this, intoPath);
   if (kind == 'binary') {

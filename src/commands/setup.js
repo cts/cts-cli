@@ -39,6 +39,7 @@ CTSCLI.Setup.prototype.setupJekyll = function() {
   console.log("Checking for Jekyll environment..");
   if (this.isJekyllEnvironment()) {
     console.log("Installing Treesheets Jekyll theme");
+    this.editConfig();
 
     // TODO(jessica)
     //  - Install the tree sheets + jekyll theme file (the one that essentially
@@ -102,6 +103,18 @@ CTSCLI.Setup.prototype.setupJekyll = function() {
 
     // also, reemmber to run using ./cts-cli/bin/cts command instead of the global command
     // in your path (to make sure you are using the devleopment version)
+    
+    var mockupUrl = "https://raw.github.com/cts/mockups/master/blog/mog/package.json";
+    CTSCLI.Utilities.fetchFile(
+      fileref,
+      function(str) {
+        CTSCLI.Utilities.installPackage(
+          mockupUrl,
+          JSON.parse(str),
+          { basepath:["mockups", "mog"] }
+        );
+      },
+      console.log);
 
   } else {
     console.log("Error: This doesn't seem to be a Jekyll environment.");
@@ -120,4 +133,16 @@ CTSCLI.Setup.prototype.isJekyllEnvironment = function() {
   var currentDirectory = process.cwd();
   var configYml = path.join(currentDirectory, "_config.yml");
   return fs.existsSync(configYml);
+};
+
+
+CTSCLI.Setup.prototype.editConfig = function() {
+  var currentDirectory = process.cwd();
+  var configYml = path.join(currentDirectory, "_config.yml");
+  var originalConfig;
+  fs.readFile(configYml, 'utf8', function (err,data) {
+    originalConfig = data;
+  });
+  fs.rename(configYml, path.join(currentDirectory, "_config-old.yml"));
+  fs.writeFile(configYml, "theme: mog\r\n" + data);
 };
