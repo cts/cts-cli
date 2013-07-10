@@ -195,17 +195,15 @@ CTSCLI.Utilities.installPackage = function(specUrl, spec, opts) {
 CTSCLI.Utilities.installFiles = function(remotePath, intoPath, dirSpec, backup) {
   var self = this;
   _.each(dirSpec, function(value, key) {
-    if (_.isArray(value)) {
-      CTSCLI.Utilities.installFiles(remotePath, intoPath, value, backup);
-    } else if (_.isObject(value)) {
-      _.each(value, function(newDirSpec, subdir) {
-        var pathClone = intoPath.slice(0);
-        pathClone.push(subdir);
-        CTSCLI.Utilities.installFiles(remotePath, pathClone, newDirSpec, backup);
-      });
+    if (_.isObject(value)) {
+        var folderPathClone = intoPath.slice(0);
+        folderPathClone.push(key);
+        var newRemotePath = remotePath+"/"+key;
+        console.log("entering path", folderPathClone);
+        CTSCLI.Utilities.installFiles(newRemotePath, folderPathClone, value, backup);
     } else {
-      var pathClone = intoPath.slice(0);
-      self.installFile(remotePath, pathClone, value, value, 'utf8', backup);
+      var filePathClone = intoPath.slice(0);
+      self.installFile(remotePath, filePathClone, key, key, value, backup);
     }
   });
 };
@@ -215,6 +213,7 @@ CTSCLI.Utilities.installFile = function(remotePath, intoPath, fname, fileSpec, k
   if (typeof fileSpec == 'string') {
     fileSpec = remotePath + '/' + fileSpec;
   }
+  console.log(fileSpec);
   CTSCLI.Utilities.fetchFile(fileSpec,
       function(contents) {
         self.saveContents(intoPath, fname, contents, kind, backup);
@@ -458,6 +457,17 @@ CTSCLI.Setup.prototype.setupJekyll = function(newJekyll) {
       this.editConfig();
     } else {
       this.makeConfig();
+      var contentUrl = "https://raw.github.com/cts/mockups/master/blog/_jekyll_content/package.json";
+      CTSCLI.Utilities.fetchFile(
+      contentUrl,
+      function(str) {
+        CTSCLI.Utilities.installPackage(
+          contentUrl,
+          JSON.parse(str),
+          { backup: true }
+        );
+      },
+      console.log);
     }
 
     // TODO(jessica)
@@ -480,12 +490,12 @@ CTSCLI.Setup.prototype.setupJekyll = function(newJekyll) {
 
     // Somewhere..
 
-    var packageUrl = "https://raw.github.com/cts/mockups/master/blog/_jekyll/package.json";
+    var jekyllUrl = "https://raw.github.com/cts/mockups/master/blog/_jekyll/package.json";
     CTSCLI.Utilities.fetchFile(
-      packageUrl,
+      jekyllUrl,
       function(str) {
         CTSCLI.Utilities.installPackage(
-          packageUrl,
+          jekyllUrl,
           JSON.parse(str),
           { backup: true }
         );
@@ -538,7 +548,7 @@ CTSCLI.Setup.prototype.setupJekyll = function(newJekyll) {
   } else if (!this.isJekyllEnvironment() && !newJekyll) {
     console.log("Error: This doesn't seem to be a Jekyll environment.");
   } else if (this.isJekyllEnvironment() && newJekyll) {
-    console.log("Error: This seems to already be a jekyll environment.");
+    console.log("Error: This seems to already be a Jekyll environment.");
   }
 };
 

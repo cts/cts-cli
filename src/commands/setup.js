@@ -49,6 +49,17 @@ CTSCLI.Setup.prototype.setupJekyll = function(newJekyll) {
       this.editConfig();
     } else {
       this.makeConfig();
+      var contentUrl = "https://raw.github.com/cts/mockups/master/blog/_jekyll_content/package.json";
+      CTSCLI.Utilities.fetchFile(
+      contentUrl,
+      function(str) {
+        CTSCLI.Utilities.installPackage(
+          contentUrl,
+          JSON.parse(str),
+          { backup: true }
+        );
+      },
+      console.log);
     }
 
     // TODO(jessica)
@@ -71,12 +82,12 @@ CTSCLI.Setup.prototype.setupJekyll = function(newJekyll) {
 
     // Somewhere..
 
-    var packageUrl = "https://raw.github.com/cts/mockups/master/blog/_jekyll/package.json";
+    var jekyllUrl = "https://raw.github.com/cts/mockups/master/blog/_jekyll/package.json";
     CTSCLI.Utilities.fetchFile(
-      packageUrl,
+      jekyllUrl,
       function(str) {
         CTSCLI.Utilities.installPackage(
-          packageUrl,
+          jekyllUrl,
           JSON.parse(str),
           { backup: true }
         );
@@ -129,7 +140,7 @@ CTSCLI.Setup.prototype.setupJekyll = function(newJekyll) {
   } else if (!this.isJekyllEnvironment() && !newJekyll) {
     console.log("Error: This doesn't seem to be a Jekyll environment.");
   } else if (this.isJekyllEnvironment() && newJekyll) {
-    console.log("Error: This seems to already be a jekyll environment.");
+    console.log("Error: This seems to already be a Jekyll environment.");
   }
 };
 
