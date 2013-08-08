@@ -7,7 +7,7 @@
  * @license MIT <http://github.com/cts/cts-cli/blob/master/LICENSE.txt>
  * @link 
  * @module cts-cli
- * @version 1.0.6
+ * @version 1.0.7
  */
 (function() {
 
@@ -587,21 +587,22 @@ CTSCLI.Setup.prototype.makeConfig = function() {
   var endOfLine = require('os').EOL;
   fs.writeFileSync(configYml, "theme: mog");
 };
+
 if (typeof CTSCLI == "undefined") {
   CTSCLI = {};
 } 
 
-CTSCLI.Install = function() {
+CTSCLI.AddTheme = function() {
 };
 
-CTSCLI.Install.prototype.help = function() {
+CTSCLI.AddTheme .prototype.help = function() {
   console.log(CTSCLI.Utilities.BANNER + 
-    "  INSTALL\n" +
-    "  =======\n\n" +
-    "  Installs an HTML mockup.\n\n" +
+    "  ADD THEME\n" +
+    "  =========\n\n" +
+    "  Adds a CTS-based theme to your site.\n\n" +
     "  Usage: \n\n" +
-    "    cts install <URL To Package File>   \n" +
-    "    cts install <ThemeType> <ThemeName>\n\n" +
+    "    cts add-theme <URL To Package File>   \n" +
+    "    cts add-theme <ThemeType> <ThemeName>\n\n" +
     "    The URL can be: \n" +
     "      * A path to a mockup package file on your local filesystem \n" +
     "      * A URL to a mockup package file\n" +
@@ -611,7 +612,7 @@ CTSCLI.Install.prototype.help = function() {
     "    repository on Github\n\n");
 };
 
-CTSCLI.Install.prototype.run = function(argv) {
+CTSCLI.AddTheme.prototype.run = function(argv) {
   if (argv._.length < 2) {
     this.help();
     return;
@@ -634,7 +635,7 @@ CTSCLI.Install.prototype.run = function(argv) {
         var packageSpec = JSON.parse(str);
         var basepath = [];
         if (typeof packageSpec.name != 'undefined') {
-          basepath = ['mockups', spec.name];
+          basepath = ['mockups', packageSpec.name];
         }
 
         CTSCLI.Utilities.installPackage(fileref, packageSpec, {
@@ -690,15 +691,17 @@ MAINHELP = CTSCLI.Utilities.BANNER +
 "    \n" +
 "     cts <COMMAND> [Optional Arguments] \n" +
 "    \n" +
-"   Supported Commands: \n" +
+"   Static Blogging: \n" +
 "    \n" +
-"     scrape     Scrapes content from a web page\n" +
-"     stitch     Stitches together web documents\n" +
-"     setup      Setups up Tree Sheet-based theming\n" +
-"     install    Installs a mockup\n" +
-"     fetch      Fetches a web document\n" +
-"     help       Provides documentation for a command \n" +
+"     setup       Sets up CTS-based theming\n" +
+"     add-theme   Installs a theme\n" +
 "    \n" +
+"   Web Development Utilities: \n" +
+"    \n" +
+"     fetch       Fetches a web document\n" +
+"     scrape      Scrapes content from a web page\n" +
+"     stitch      Stitches together web documents\n" +
+"   \n" + 
 "   To see documentation for a particular <COMMAND>, type: \n" +
 "    \n" +
 "     cts help <COMMAND>\n\n";
@@ -710,7 +713,7 @@ CTSCLI.Commands = {
   "scrape": new CTSCLI.Scrape(),
   "stitch": new CTSCLI.Stitch(),
   "fetch": new CTSCLI.Fetch(),
-  "install": new CTSCLI.Install(),
+  "add-theme": new CTSCLI.AddTheme(),
   "setup": new CTSCLI.Setup()
 };
 

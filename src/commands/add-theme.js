@@ -2,17 +2,17 @@ if (typeof CTSCLI == "undefined") {
   CTSCLI = {};
 } 
 
-CTSCLI.Install = function() {
+CTSCLI.AddTheme = function() {
 };
 
-CTSCLI.Install.prototype.help = function() {
+CTSCLI.AddTheme .prototype.help = function() {
   console.log(CTSCLI.Utilities.BANNER + 
-    "  INSTALL\n" +
-    "  =======\n\n" +
-    "  Installs an HTML mockup.\n\n" +
+    "  ADD THEME\n" +
+    "  =========\n\n" +
+    "  Adds a CTS-based theme to your site.\n\n" +
     "  Usage: \n\n" +
-    "    cts install <URL To Package File>   \n" +
-    "    cts install <ThemeType> <ThemeName>\n\n" +
+    "    cts add-theme <URL To Package File>   \n" +
+    "    cts add-theme <ThemeType> <ThemeName>\n\n" +
     "    The URL can be: \n" +
     "      * A path to a mockup package file on your local filesystem \n" +
     "      * A URL to a mockup package file\n" +
@@ -22,7 +22,7 @@ CTSCLI.Install.prototype.help = function() {
     "    repository on Github\n\n");
 };
 
-CTSCLI.Install.prototype.run = function(argv) {
+CTSCLI.AddTheme.prototype.run = function(argv) {
   if (argv._.length < 2) {
     this.help();
     return;
@@ -45,7 +45,7 @@ CTSCLI.Install.prototype.run = function(argv) {
         var packageSpec = JSON.parse(str);
         var basepath = [];
         if (typeof packageSpec.name != 'undefined') {
-          basepath = ['mockups', spec.name];
+          basepath = ['mockups', packageSpec.name];
         }
 
         CTSCLI.Utilities.installPackage(fileref, packageSpec, {

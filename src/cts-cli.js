@@ -10,15 +10,17 @@ MAINHELP = CTSCLI.Utilities.BANNER +
 "    \n" +
 "     cts <COMMAND> [Optional Arguments] \n" +
 "    \n" +
-"   Supported Commands: \n" +
+"   Static Blogging: \n" +
 "    \n" +
-"     scrape     Scrapes content from a web page\n" +
-"     stitch     Stitches together web documents\n" +
-"     setup      Setups up Tree Sheet-based theming\n" +
-"     install    Installs a mockup\n" +
-"     fetch      Fetches a web document\n" +
-"     help       Provides documentation for a command \n" +
+"     setup       Sets up CTS-based theming\n" +
+"     add-theme   Installs a theme\n" +
 "    \n" +
+"   Web Development Utilities: \n" +
+"    \n" +
+"     fetch       Fetches a web document\n" +
+"     scrape      Scrapes content from a web page\n" +
+"     stitch      Stitches together web documents\n" +
+"   \n" + 
 "   To see documentation for a particular <COMMAND>, type: \n" +
 "    \n" +
 "     cts help <COMMAND>\n\n";
@@ -30,7 +32,7 @@ CTSCLI.Commands = {
   "scrape": new CTSCLI.Scrape(),
   "stitch": new CTSCLI.Stitch(),
   "fetch": new CTSCLI.Fetch(),
-  "install": new CTSCLI.Install(),
+  "add-theme": new CTSCLI.AddTheme(),
   "setup": new CTSCLI.Setup()
 };
 
