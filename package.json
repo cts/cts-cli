@@ -1,6 +1,6 @@
 {
   "name": "cts-cli",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Cascading Tree Sheets command line interface",
   "keywords": [
     "web scraping",
