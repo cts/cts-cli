@@ -1,6 +1,6 @@
 {
   "name": "cts-cli",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Cascading Tree Sheets command line interface",
   "keywords": [
     "web scraping",
@@ -9,12 +9,21 @@
     "declarative",
     "scrape"
   ],
-  "maintainers": [{
+  "author": [{
     "name": "Ted Benson",
     "email": "eob@csail.mit.edu",
     "url": "http://www.edwardbenson.com/"
   }],
   "contributors": [
+  {
+    "name": "Ted Benson",
+    "email": "eob@csail.mit.edu",
+    "url": "http://www.edwardbenson.com/"
+  },
+  {
+    "name": "Jessica Anderson",
+    "email": "jessmand@mit.edu"
+  }
   ],
   "bugs": {
     "email": "eob@csail.mit.edu",
